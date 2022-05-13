@@ -8,12 +8,12 @@ import express from "express";
 import q2m from "query-to-mongo"
 import postsModel from "./model.js";
 import createError from "http-errors";
-import { checkUserMiddleware, checkValidationResult } from "./validation.js"
+import { checkPostMiddleware, checkValidationResult } from "./validation.js"
 
 const postsRouter = express.Router()
 
 //1.
-postsRouter.post("/", checkUserMiddleware, checkValidationResult, async (req,res,next)=>{
+postsRouter.post("/", checkPostMiddleware, checkValidationResult, async (req,res,next)=>{
     try {
         console.log("REQUEST BODY: ", req.body)
 
@@ -113,8 +113,19 @@ postsRouter.delete("/:id", async (req,res,next)=>{
 
 
 //POST
-postsRouter.post("/:id", async (req, res, next) => {
+postsRouter.post("/:id/comments", async (req, res, next) => {
     try {
+        const commentToInsert = {...req.body, commentDate:new Date()}
+        const modifiedPost = await postsModel.findByIdAndUpdate(
+            req.params.id, //WHO
+            { $push: { comments:commentToInsert} }, // HOW
+            { new: true }
+          )
+          if (modifiedPost) {
+            res.send(modifiedPost)
+          } else {
+            next(createError(404, `Post with id ${req.params.id} not found!`))
+          }
     } catch (error) {
       next(error)
     }

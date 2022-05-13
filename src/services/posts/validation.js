@@ -52,7 +52,7 @@ const schema = {
   },
 }
 
-export const checkUserMiddleware = checkSchema(schema)
+export const checkPostMiddleware = checkSchema(schema)
 
 export const checkValidationResult = (req, res, next) => {
   const errors = validationResult(req)

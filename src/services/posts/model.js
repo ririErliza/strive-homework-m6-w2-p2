@@ -21,7 +21,7 @@ const postsSchema = new Schema(
       avatar:{ type: String, required: true }
     },
     content:{ type: String, required: true },
-    comments: [{comment:String, commentDate:Date}],
+    comments: [{nameOfcommenter:String, comment:String, commentDate:Date}],
   },
   
   {
