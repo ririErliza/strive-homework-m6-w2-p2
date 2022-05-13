@@ -2,62 +2,54 @@ import { checkSchema, validationResult } from "express-validator"
 import createError from "http-errors"
 
 const schema = {
-    category: {
-        in: ["body"],
-        isString: {
-          errorMessage: "Category validation failed! category is a mandatory field and needs to be a string!",
-        }
-      },
-      title: {
-        in: ["body"],
-        isString: {
-          errorMessage: "title validation failed! title is a mandatory field and needs to be a string!",
-        }
-      },
-      cover: {
-        in: ["body"],
-        isString: {
-          errorMessage: "cover validation failed! cover is not in the right format!",
-        }
-      },
-      readTime: {
-        
-        value:{
-        in: ["body"],
-        isNumber: {
-          errorMessage: "value validation failed! value should be in number!",
-        }
-      ,
-        unit:{
-            in: ["body"],
-            isString: {
-              errorMessage: "unit validation failed! unit should be stated as minute/minutes!",
-            }
-      }
-    }  
+  category: {
+    in: ["body"],
+    isString: {
+      errorMessage: "category validation failed, type must be  string ",
     },
-
-    author: {
-        name:{
-        in: ["body"],
-        isString: {
-          errorMessage: "name validation failed! name is a mandatory field and needs to be a string!",
-        }
-      ,
-        avatar:{
-        in: ["body"],
-        isString: {
-          errorMessage: "avatar validation failed! avatar is not in the right format!",
-        }
-      }
-        }
+  },
+  title: {
+    in: ["body"],
+    isString: {
+      errorMessage: "title validation failed, type must be string  ",
     },
-    content: {
-        in: ["body"],
-        isString: {
-          errorMessage: "content validation failed! content is a mandatory field and needs to be a string!",
-        }
-      },
+  },
+  content: {
+    in: ["body"],
+    isString: {
+      errorMessage: "content validation failed, type must be string ",
+    },
+  },
+  "author.name": {
+    in: ["body"],
+    isString: {
+      errorMessage: "author.name validation failed, type must be string",
+    },
+  },
+  "author.avatar": {
+    in: ["body"],
+    isString: {
+      errorMessage: "author.avatar validation failed, type must be string",
+    },
+  },
+  "readTime.value": {
+    in: ["body"],
+    isNumeric: {
+      errorMessage: "readTime.value validation failed, type must be numeric",
+    },
+  },
+  "readTime.unit": {
+    in: ["body"],
+    isString: {
+      errorMessage: "readTime.unit validation failed, type must be string",
+    },
+  },
+  cover: {
+    in: ["body"],
+    isString: {
+      errorMessage: "cover validation failed, type must be string",
+    },
+  },
 }
 
 export const checkUserMiddleware = checkSchema(schema)
