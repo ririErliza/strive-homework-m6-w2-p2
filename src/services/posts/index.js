@@ -170,7 +170,7 @@ postsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
   })
 
 //PUT
-postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
+postsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
     try {
     } catch (error) {
       next(error)
@@ -178,8 +178,18 @@ postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
   })
 
 //DELETE
-postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
+postsRouter.delete("/:id/comments/:commentId", async (req, res, next) => {
     try {
+        const modifiedPost = await postsModel.findByIdAndUpdate(
+        req.params.id, //WHO
+        { $pull: { comments:{_id:req.params.commentId}} }, // HOW
+        { new: true }
+    )
+    if (modifiedPost) {
+        res.send(modifiedPost)
+    } else {
+        next(createError(404, `Post with id ${req.params.id} not found!`))
+    }
     } catch (error) {
       next(error)
     }
