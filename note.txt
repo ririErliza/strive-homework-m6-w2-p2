@@ -40,3 +40,15 @@ postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
       next(error)
     }
   })
+
+  ----------------------------------------------------------------------------------------------------
+  what error is this?
+  TypeError: post.comments.findById is not a function
+    at file:///C:/Users/erliz/OneDrive/Desktop/Homework/ReactJS/strive-homework-m5-w2-p2-bookstore/strive-homework-m6-w2-p2/src/services/posts/index.js:154:42
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+    that was because i typed 
+    const theComment = post.comments.find(req.params.commentId)
+
+    instead of:
+    const theComment = post.comments.find(comment => comment._id.toString() === req.params.commentId) 

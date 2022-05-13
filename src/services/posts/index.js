@@ -62,9 +62,9 @@ postsRouter.get("/", async (req,res,next)=>{
 //3.
 postsRouter.get("/:id", async (req,res,next)=>{
     try {
-        const posts = await postsModel.findById(req.params.id)
-        if(posts){
-            res.send(posts)
+        const post = await postsModel.findById(req.params.id)
+        if(post){
+            res.send(post)
         }else{
             next(createError(404, `Sorry, Cannot find Post with id ${req.params.id}!`))
         }
@@ -134,6 +134,13 @@ postsRouter.post("/:id/comments", async (req, res, next) => {
 //GET
 postsRouter.get("/:id/comments", async (req, res, next) => {
     try {
+    const post = await postsModel.findById(req.params.id)
+    if (post) {
+        res.send(post.comments)
+        
+    } else {
+        next(createError(404, `Post with id ${req.params.id} not found!`))
+    }
     } catch (error) {
       next(error)
     }
@@ -142,6 +149,21 @@ postsRouter.get("/:id/comments", async (req, res, next) => {
 //GET byID
 postsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
     try {
+    const post = await postsModel.findById(req.params.id)
+    if (post) {
+        const theComment = post.comments.find(comment => comment._id.toString() === req.params.commentId)
+        if (theComment) {
+            res.send(theComment)
+            
+        } else {
+            next(createError(404, `Post with id ${req.params.commentId} not found!`))
+            
+        }
+        
+    } else {
+        next(createError(404, `Post with id ${req.params.id} not found!`))
+        
+    }
     } catch (error) {
       next(error)
     }
