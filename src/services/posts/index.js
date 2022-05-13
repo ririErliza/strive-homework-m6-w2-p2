@@ -109,6 +109,47 @@ postsRouter.delete("/:id", async (req,res,next)=>{
     
 })
 
+//-----------------------------EMBEDDING COMMENTS--------------------------
 
+
+//POST
+postsRouter.post("/:id", async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  })
+
+//GET
+postsRouter.get("/:id/comments", async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  })
+
+//GET byID
+postsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  })
+
+//PUT
+postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  })
+
+//DELETE
+postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  })
 
 export default postsRouter
