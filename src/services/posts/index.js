@@ -170,8 +170,24 @@ postsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
   })
 
 //PUT
-postsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
+postsRouter.put("/:id/comments/:commentId", async (req, res, next) => {
     try {
+    const post = await postsModel.findById(req.params.id)
+
+    if(post){
+        const index=post.comments.findIndex(comment =>comment._id.toString()=== req.params.commentId)
+        if (index !== -1){
+            const oldObject = post.comments[index].toObject()
+            post.comments[index]={...oldObject,...req.body}
+
+            await post.save()
+            res.send(post)
+        }else{
+            next(createError(404, `Post with id ${req.params.commentId} not found!`))
+        }
+    }else{
+        next(createError(404, `Post with id ${req.params.id} not found!`))
+    }
     } catch (error) {
       next(error)
     }
