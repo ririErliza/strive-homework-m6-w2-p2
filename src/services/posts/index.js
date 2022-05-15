@@ -46,6 +46,7 @@ postsRouter.get("/", async (req,res,next)=>{
         .skip(mongoQuery.options.skip)
         .limit(mongoQuery.options.limit)
         .sort(mongoQuery.options.sort)
+        .populate({path:"author", select: "name surname"})
 
         res.send({
         links: mongoQuery.links("http://localhost:3002/blogPosts", total),
@@ -62,7 +63,7 @@ postsRouter.get("/", async (req,res,next)=>{
 //3.
 postsRouter.get("/:id", async (req,res,next)=>{
     try {
-        const post = await postsModel.findById(req.params.id)
+        const post = await postsModel.findById(req.params.id).populate({path:"author", select: "name surname"})
         if(post){
             res.send(post)
         }else{

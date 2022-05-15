@@ -16,10 +16,7 @@ const postsSchema = new Schema(
       value: { type: Number, required: true },
       unit: { type: String, required: true }
  },
-    author: {
-      name: { type: String, required: true },
-      avatar:{ type: String, required: true }
-    },
+    author: [{type:mongoose.Types.ObjectId, ref:"Author"}],
     content:{ type: String, required: true },
     comments: [{nameOfcommenter:String, comment:String, commentDate:Date}],
   },
