@@ -8,7 +8,7 @@ import { badRequestHandler, unauthorizedHandler, forbiddenHandler, notFoundHandl
 
 const server = express()
 
-const port = 3002
+const port = process.env.PORT || 3002
 
 
 // _____________ MIDDLEWARES______________

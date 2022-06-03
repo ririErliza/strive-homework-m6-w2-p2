@@ -16,9 +16,15 @@ const postsSchema = new Schema(
       value: { type: Number, required: true },
       unit: { type: String, required: true }
  },
-    author: [{type:mongoose.Types.ObjectId, ref:"Author"}],
+    author: {type:mongoose.Types.ObjectId, ref:"Author"},
     content:{ type: String, required: true },
-    comments: [{nameOfcommenter:String, comment:String, commentDate:Date}],
+    comments: [
+      {
+        text: { type: String, required: true },
+        rate: { type: Number, min: [1, "Rate must be min 1"], max: [5, "Rate must be max 5"] },
+        user: { type: mongoose.Types.ObjectId, ref: "Author" },
+      },
+    ],
   },
   
   {

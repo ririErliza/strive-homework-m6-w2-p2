@@ -41,7 +41,7 @@ postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
     }
   })
 
-  ----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
   what error is this?
   TypeError: post.comments.findById is not a function
     at file:///C:/Users/erliz/OneDrive/Desktop/Homework/ReactJS/strive-homework-m5-w2-p2-bookstore/strive-homework-m6-w2-p2/src/services/posts/index.js:154:42
@@ -52,3 +52,11 @@ postsRouter.get("/:id/comment/:commentId", async (req, res, next) => {
 
     instead of:
     const theComment = post.comments.find(comment => comment._id.toString() === req.params.commentId) 
+
+----------------------------------------------------------------------------------------------------
+    401 unauthorized, 403 forbidden, the difference?
+
+    401 Unauthorized is the status code to return when the client provides no credentials or invalid credentials. 
+    403 Forbidden is the status code to return when a client has valid credentials but not enough privileges to perform an action on a resource.
+
+https://auth0.com/blog/forbidden-unauthorized-http-status-codes/#:~:text=401%20Unauthorized%20is%20the%20status,an%20action%20on%20a%20resource.

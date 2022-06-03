@@ -7,25 +7,22 @@
 import express from "express";
 import q2m from "query-to-mongo"
 import postsModel from "./model.js";
+import authorsModel from "../authors/model.js"
 import createError from "http-errors";
-import { checkPostMiddleware, checkValidationResult } from "./validation.js"
+import { checkPostMiddleware, checkValidationResult, checkCommentSchema } from "./validation.js"
 
 const postsRouter = express.Router()
 
 //1.
-postsRouter.post("/", checkPostMiddleware, checkValidationResult, async (req,res,next)=>{
+postsRouter.post("/", checkPostMiddleware, checkValidationResult, async (req,res,next) =>{
     try {
-        console.log("REQUEST BODY: ", req.body)
-
-        const newPost = new postsModel(req.body) // this is going to VALIDATE the req.body
-        const savedPost = await newPost.save() // This saves the validated body into the posts' collection
-    
-        res.send(savedPost)
-    } catch (error) {
+        const newPost = new postsModel(req.body)
+        const { _id } = await newPost.save()
+        res.status(201).send({ _id })
+      } catch (error) {
         next(error)
-    }
-
-})
+      }
+    })
 
 //2.
 postsRouter.get("/", async (req,res,next)=>{
@@ -46,10 +43,10 @@ postsRouter.get("/", async (req,res,next)=>{
         .skip(mongoQuery.options.skip)
         .limit(mongoQuery.options.limit)
         .sort(mongoQuery.options.sort)
-        .populate({path:"author", select: "name surname"})
+        .populate({path:"author", select: "name surname avatar"})
 
         res.send({
-        links: mongoQuery.links("http://localhost:3002/blogPosts", total),
+        links: mongoQuery.links(`${process.env.API_URL}/blogPosts`, total),
         total,
         totalPages: Math.ceil(total / mongoQuery.options.limit),
         posts,
@@ -63,7 +60,9 @@ postsRouter.get("/", async (req,res,next)=>{
 //3.
 postsRouter.get("/:id", async (req,res,next)=>{
     try {
-        const post = await postsModel.findById(req.params.id).populate({path:"author", select: "name surname"})
+        const post = await postsModel.findById(req.params.id)
+        .populate({path:"author", select: "name surname avatar"})
+        .populate({ path: "comments.user", select: "name surname avatar" })
         if(post){
             res.send(post)
         }else{
@@ -82,7 +81,7 @@ postsRouter.put("/:id", async (req,res,next)=>{
         const updatedPost = await postsModel.findByIdAndUpdate(
         req.params.id, // WHO
         req.body, // HOW
-        { new: true } // OPTIONS (if you want to obtain the updated Post you should specify new: true)
+        { new: true, runValidators: true } // OPTIONS (if you want to obtain the updated Post you should specify new: true)
         )
         if(updatedPost){
             res.send(updatedPost)
@@ -120,7 +119,7 @@ postsRouter.post("/:id/comments", async (req, res, next) => {
         const modifiedPost = await postsModel.findByIdAndUpdate(
             req.params.id, //WHO
             { $push: { comments:commentToInsert} }, // HOW
-            { new: true }
+            { new: true, runValidators: true }
           )
           if (modifiedPost) {
             res.send(modifiedPost)
@@ -135,7 +134,7 @@ postsRouter.post("/:id/comments", async (req, res, next) => {
 //GET
 postsRouter.get("/:id/comments", async (req, res, next) => {
     try {
-    const post = await postsModel.findById(req.params.id)
+    const post = await postsModel.findById(req.params.id).populate({ path: "comments.user", select: "name surname avatar" })
     if (post) {
         res.send(post.comments)
         

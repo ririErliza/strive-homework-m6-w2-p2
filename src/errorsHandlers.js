@@ -7,7 +7,7 @@ export const badRequestHandler = (err, req, res, next) => {
   } else {
     next(err)
   }
-} // 400s
+} // 400s Bad request ⇒ there is something wrong with user request
 
 export const unauthorizedHandler = (err, req, res, next) => {
   if (err.status === 401) {
@@ -16,7 +16,7 @@ export const unauthorizedHandler = (err, req, res, next) => {
   } else {
     next(err)
   }
-} // 401s
+} // 401s Unauthorized ⇒ user are not authorized
 
 export const forbiddenHandler = (err, req, res, next) => {
   if (err.status === 403) {
@@ -25,7 +25,7 @@ export const forbiddenHandler = (err, req, res, next) => {
   } else {
     next(err)
   }
-} // 403s
+} // 403s Forbidden => 
 
 export const notFoundHandler = (err, req, res, next) => {
   if (err.status === 404 || err instanceof mongoose.CastError) {
@@ -34,9 +34,9 @@ export const notFoundHandler = (err, req, res, next) => {
   } else {
     next(err)
   }
-} // 404s
+} // 404s Not found ⇒ cannot find the info user looking for
 
 export const genericErrorHandler = (err, req, res, next) => {
   console.log(err)
-  res.status(500).send({ error: "Generic error" })
-}
+  res.status(500).send({ error: "Generic error, error on server side" })
+} // 500 Internal server error ⇒ something wrong, server side

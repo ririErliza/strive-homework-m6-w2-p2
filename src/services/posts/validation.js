@@ -20,16 +20,10 @@ const schema = {
       errorMessage: "content validation failed, type must be string ",
     },
   },
-  "author.name": {
+  author: {
     in: ["body"],
     isString: {
-      errorMessage: "author.name validation failed, type must be string",
-    },
-  },
-  "author.avatar": {
-    in: ["body"],
-    isString: {
-      errorMessage: "author.avatar validation failed, type must be string",
+      errorMessage: "author validation failed, type must be string",
     },
   },
   "readTime.value": {
@@ -52,7 +46,34 @@ const schema = {
   },
 }
 
+const commentSchema = {
+  text: {
+    in: ["body"],
+    isString: {
+      errorMessage: "text field is required for comment",
+    },
+  },
+  user: {
+    in: ["body"],
+    isString: {
+      errorMessage: "user Id is required for comment",
+    },
+  },
+  rate: {
+    in: ["body"],
+    isInt: {
+      errorMessage: "rate field is required for comment and must be integer number between 1 and 5",
+      options: {
+        min: 1,
+        max: 5,
+      },
+    },
+  },
+}
+
 export const checkPostMiddleware = checkSchema(schema)
+
+export const checkCommentSchema = checkSchema(commentSchema)
 
 export const checkValidationResult = (req, res, next) => {
   const errors = validationResult(req)

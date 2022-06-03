@@ -8,29 +8,41 @@ import express from "express";
 import authorsModel from "./model.js";
 import createError from "http-errors";
 import q2m from "query-to-mongo";
+import { checkAuthorSchema, checkValidationResult } from "./validation.js"
 
 
 
 const authorsRouter = express.Router()
 
 //1.
-authorsRouter.post("/", async (req,res)=>{
-try {
-    console.log("REQUEST BODY: ", req.body)
+// authorsRouter.post("/",checkAuthorSchema, checkValidationResult, async (req,res, next)=>{
+// try {
+//     console.log("REQUEST BODY: ", req.body)
 
-    const newAuthor = new authorsModel(req.body) // this is going to VALIDATE the req.body
-    const savedAuthor = await newAuthor.save() // This saves the validated body into the authors' collection
+//     const newAuthor = new authorsModel({ ...req.body, avatar: `https://ui-avatars.com/api/?name=${req.body.name}+${req.body.surname}` }) // this is going to VALIDATE the req.body, also change avatar (e.g. https://ui-avatars.com/api/?name=John+Doe, server added by using name and surname)
+//     const { _id } = await newAuthor.save() 
 
-    res.send(savedAuthor)
+//     res.status(201).send({ _id })
     
-} catch (error) {
-    next(error)
-}
+// } catch (error) {
+//     next(error)
+// }
    
-})
+// })
+
+authorsRouter.post("/", checkAuthorSchema, checkValidationResult, async (req, res, next) => {
+    try {
+      const newAuthor = new authorsModel({ ...req.body, avatar: `https://ui-avatars.com/api/?name=${req.body.name}+${req.body.surname}` })
+  
+      const { _id } = await newAuthor.save()
+      res.status(201).send({ _id })
+    } catch (error) {
+      next(error)
+    }
+  })
 
 //2.
-authorsRouter.get("/", async (req,res)=>{
+authorsRouter.get("/", async (req,res,next)=>{
     try {
         console.log("REQ.QUERY --> ", req.query)
         console.log("MONGO QUERY --> ", q2m(req.query))
@@ -49,7 +61,7 @@ authorsRouter.get("/", async (req,res)=>{
         .sort(mongoQuery.options.sort)
 
         res.send({
-            links: mongoQuery.links("http://localhost:3002/authors", total),
+            links: mongoQuery.links(`${process.env.API_URL}/authors`, total),
             total,
             totalPages: Math.ceil(total / mongoQuery.options.limit),
             authors
@@ -81,7 +93,7 @@ authorsRouter.put("/:id", async (req,res)=>{
         const updatedAuthor = await authorsModel.findByIdAndUpdate(
             req.params.id, // WHO
             req.body, // HOW
-            { new: true } // OPTIONS (if you want to obtain the updated Author you should specify new: true)
+            { new: true, runValidators: true } // OPTIONS (if you want to obtain the updated Author you should specify new: true)
           )
         if(updatedAuthor){  
             res.send(updatedAuthor)
